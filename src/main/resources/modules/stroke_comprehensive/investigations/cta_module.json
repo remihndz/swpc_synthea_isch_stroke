@@ -78,6 +78,12 @@
       "type": "SetAttribute",
       "attribute": "thrombectomy_candidate",
       "value": true,
+      "direct_transition": "Set_Large_Vessel_Occlusion"
+    },
+    "Set_Large_Vessel_Occlusion": {
+      "type": "SetAttribute",
+      "attribute": "large_vessel_occlusion",
+      "value": true,
       "direct_transition": "Terminal"
     },
     "CTA_Patent_Vessels": {

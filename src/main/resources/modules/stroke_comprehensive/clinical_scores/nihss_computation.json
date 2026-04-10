@@ -1,38 +1,36 @@
 {
   "name": "NIHSS Score Computation",
   "remarks": [
-    "Computes NIHSS based on multivariate regression model",
-    "Factors: base score, age adjustment, hemorrhage penalty",
-    "Base: Gaussian mean=8, SD=6",
-    "Age >65: +2 points",
-    "Hemorrhagic: +3 points",
+    "Computes NIHSS by calling Java regression code",
+    "Uses demographics, subtype, vitals, labs, imaging, ECG and TEE findings,",
+    "vascular risk factors, and acute interventions",
+    "Timepoint and target attribute are provided by the calling module",
     "Range: 0-42"
   ],
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Compute_Base_NIHSS"
+      "direct_transition": "Compute_NIHSS"
     },
     "Terminal": {
       "type": "Terminal"
     },
-    "Compute_Base_NIHSS": {
-      "type": "Observation",
+    "Compute_NIHSS": {
+      "type": "StrokeClinicalScore",
+      "score_type": "NIHSS",
+      "timepoint_attribute": "stroke_score_timepoint",
+      "assign_to_attribute_attribute": "stroke_score_target_attribute",
       "category": "exam",
       "codes": [
         {
           "system": "LOINC",
           "code": "9740-3",
-          "display": "NIHSS"
+          "display": "NIHSS score"
         }
       ],
-      "value": {
-        "low": 5,
-        "high": 15
-      },
+      "unit": "score",
       "remarks": [
-        "Base NIHSS computation - Gaussian distribution",
-        "In Java implementation: incorporates age, hemorrhage status, imaging findings"
+        "Delegates score generation to StrokeScoreCalculator"
       ],
       "direct_transition": "Terminal"
     }

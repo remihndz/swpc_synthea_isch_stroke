@@ -34,6 +34,12 @@
       "type": "SetAttribute",
       "attribute": "stroke_type",
       "value": "TIA",
+      "direct_transition": "Mark_TIA_History"
+    },
+    "Mark_TIA_History": {
+      "type": "SetAttribute",
+      "attribute": "had_stroke",
+      "value": true,
       "direct_transition": "TIA_Condition_Onset"
     },
     "TIA_Condition_Onset": {
@@ -64,6 +70,12 @@
       "type": "SetAttribute",
       "attribute": "stroke_type",
       "value": "Ischemic",
+      "direct_transition": "Mark_Ischemic_Stroke_History"
+    },
+    "Mark_Ischemic_Stroke_History": {
+      "type": "SetAttribute",
+      "attribute": "had_stroke",
+      "value": true,
       "direct_transition": "Ischemic_Condition_Onset"
     },
     "Ischemic_Condition_Onset": {
@@ -127,6 +139,12 @@
       "type": "SetAttribute",
       "attribute": "stroke_type",
       "value": "Hemorrhagic",
+      "direct_transition": "Mark_Hemorrhagic_Stroke_History"
+    },
+    "Mark_Hemorrhagic_Stroke_History": {
+      "type": "SetAttribute",
+      "attribute": "had_stroke",
+      "value": true,
       "direct_transition": "Hemorrhagic_Condition_Onset"
     },
     "Hemorrhagic_Condition_Onset": {

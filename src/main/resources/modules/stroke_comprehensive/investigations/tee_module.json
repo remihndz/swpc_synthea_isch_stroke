@@ -63,7 +63,7 @@
         "text": "Patent foramen ovale with right-to-left shunt"
       },
       "assign_to_attribute": "tee_finding",
-      "direct_transition": "Terminal"
+      "direct_transition": "Set_Cardioembolic_Source"
     },
     "TEE_LAA_Thrombus": {
       "type": "Observation",
@@ -78,7 +78,7 @@
         "text": "Left atrial appendage thrombus - cardioembolic source"
       },
       "assign_to_attribute": "tee_finding",
-      "direct_transition": "Terminal"
+      "direct_transition": "Set_Cardioembolic_Source"
     },
     "TEE_Vegetations": {
       "type": "Observation",
@@ -93,7 +93,7 @@
         "text": "Valvular vegetations suggestive of endocarditis"
       },
       "assign_to_attribute": "tee_finding",
-      "direct_transition": "Terminal"
+      "direct_transition": "Set_Cardioembolic_Source"
     },
     "TEE_Normal": {
       "type": "Observation",
@@ -108,6 +108,12 @@
         "text": "No cardioembolic source identified"
       },
       "assign_to_attribute": "tee_finding",
+      "direct_transition": "Terminal"
+    },
+    "Set_Cardioembolic_Source": {
+      "type": "SetAttribute",
+      "attribute": "cardioembolic_source_identified",
+      "value": true,
       "direct_transition": "Terminal"
     }
   },

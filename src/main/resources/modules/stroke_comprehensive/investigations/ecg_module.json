@@ -77,6 +77,12 @@
         "text": "Atrial fibrillation"
       },
       "assign_to_attribute": "ecg_finding",
+      "direct_transition": "Set_AFib_Detected"
+    },
+    "Set_AFib_Detected": {
+      "type": "SetAttribute",
+      "attribute": "atrial_fibrillation_detected",
+      "value": true,
       "direct_transition": "Set_Cardioembolic_Risk"
     },
     "Set_Cardioembolic_Risk": {
@@ -98,7 +104,7 @@
         "text": "LVH on ECG"
       },
       "assign_to_attribute": "ecg_finding",
-      "direct_transition": "Terminal"
+      "direct_transition": "Set_ECG_Abnormal"
     },
     "ECG_Ischemic": {
       "type": "Observation",
@@ -113,6 +119,12 @@
         "text": "Ischemic changes"
       },
       "assign_to_attribute": "ecg_finding",
+      "direct_transition": "Set_ECG_Abnormal"
+    },
+    "Set_ECG_Abnormal": {
+      "type": "SetAttribute",
+      "attribute": "ecg_abnormal",
+      "value": true,
       "direct_transition": "Terminal"
     }
   },

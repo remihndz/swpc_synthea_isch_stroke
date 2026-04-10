@@ -18,6 +18,15 @@
       "type": "Simple",
       "conditional_transition": [
         {
+          "transition": "TIA_Interventions",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "stroke_type",
+            "operator": "==",
+            "value": "TIA"
+          }
+        },
+        {
           "transition": "Ischemic_Interventions",
           "condition": {
             "condition_type": "Attribute",
@@ -40,6 +49,11 @@
         }
       ]
     },
+    "TIA_Interventions": {
+      "type": "CallSubmodule",
+      "submodule": "medications/statin",
+      "direct_transition": "Terminal"
+    },
     "Ischemic_Interventions": {
       "type": "Simple",
       "direct_transition": "Administer_Alteplase"
@@ -57,6 +71,43 @@
       "remarks": [
         "tPA (alteplase) administered for acute ischemic stroke within thrombolytic window"
       ],
+      "direct_transition": "Check_Thrombectomy_Candidate"
+    },
+    "Check_Thrombectomy_Candidate": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Mechanical_Thrombectomy",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "thrombectomy_candidate",
+            "operator": "==",
+            "value": true
+          }
+        },
+        {
+          "transition": "Administer_Clopidogrel"
+        }
+      ]
+    },
+    "Mechanical_Thrombectomy": {
+      "type": "Procedure",
+      "assign_to_attribute": "stroke_procedure_thrombectomy",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 433112001,
+          "display": "Mechanical thrombectomy"
+        }
+      ],
+      "duration": {
+        "low": 30,
+        "high": 60,
+        "unit": "minutes"
+      },
+      "remarks": [
+        "Performed for large vessel occlusion when CTA identifies thrombectomy candidacy"
+      ],
       "direct_transition": "Administer_Clopidogrel"
     },
     "Administer_Clopidogrel": {
@@ -73,7 +124,7 @@
     },
     "Administer_Statin": {
       "type": "CallSubmodule",
-      "module": "medications/statin",
+      "submodule": "medications/statin",
       "direct_transition": "Terminal"
     },
     "Hemorrhagic_Interventions": {
@@ -82,11 +133,17 @@
     },
     "BP_Lowering_Medication": {
       "type": "CallSubmodule",
-      "module": "medications/hypertension_medication",
+      "submodule": "medications/hypertension_medication",
       "remarks": [
         "Call hypertension medication module to prescribe BP-lowering agents",
         "For hemorrhagic stroke: goal SBP <140 mmHg"
       ],
+      "direct_transition": "Set_BP_Lowering_Treatment"
+    },
+    "Set_BP_Lowering_Treatment": {
+      "type": "SetAttribute",
+      "attribute": "stroke_medication_bp_lowering",
+      "value": true,
       "direct_transition": "Terminal"
     }
   },

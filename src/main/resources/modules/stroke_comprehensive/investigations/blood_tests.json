@@ -23,9 +23,12 @@
         }
       ],
       "unit": "10*3/uL",
-      "value": {
-        "low": 4.5,
-        "high": 11.0
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "low": 4.5,
+          "high": 11.0
+        }
       },
       "assign_to_attribute": "wbc_count",
       "direct_transition": "Glucose_Test"
@@ -41,9 +44,12 @@
         }
       ],
       "unit": "mg/dL",
-      "value": {
-        "low": 70,
-        "high": 150
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "low": 70,
+          "high": 150
+        }
       },
       "assign_to_attribute": "glucose_level",
       "direct_transition": "INR_Test"
@@ -59,9 +65,12 @@
         }
       ],
       "unit": "ratio",
-      "value": {
-        "low": 0.8,
-        "high": 1.1
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "low": 0.8,
+          "high": 1.1
+        }
       },
       "assign_to_attribute": "inr_value",
       "direct_transition": "Troponin_Test"
@@ -77,9 +86,12 @@
         }
       ],
       "unit": "ng/mL",
-      "value": {
-        "low": 0.0,
-        "high": 0.04
+      "distribution": {
+        "kind": "UNIFORM",
+        "parameters": {
+          "low": 0.0,
+          "high": 0.04
+        }
       },
       "assign_to_attribute": "troponin_level",
       "direct_transition": "Terminal"

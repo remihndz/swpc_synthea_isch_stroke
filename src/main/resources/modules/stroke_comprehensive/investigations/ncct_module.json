@@ -59,6 +59,12 @@
         "text": "Hyperdense lesion with edema"
       },
       "assign_to_attribute": "ncct_finding",
+      "direct_transition": "Set_Hemorrhage_On_Imaging"
+    },
+    "Set_Hemorrhage_On_Imaging": {
+      "type": "SetAttribute",
+      "attribute": "hemorrhage_on_imaging",
+      "value": true,
       "direct_transition": "Terminal"
     },
     "NCCT_Ischemic": {
@@ -102,6 +108,12 @@
         "text": "Early ischemic changes: loss of gray-white differentiation"
       },
       "assign_to_attribute": "ncct_finding",
+      "direct_transition": "Set_Early_Ischemic_Change"
+    },
+    "Set_Early_Ischemic_Change": {
+      "type": "SetAttribute",
+      "attribute": "early_ischemic_change",
+      "value": true,
       "direct_transition": "Terminal"
     }
   },

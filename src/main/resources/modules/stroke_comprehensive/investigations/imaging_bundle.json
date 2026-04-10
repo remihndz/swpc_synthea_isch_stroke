@@ -14,22 +14,22 @@
     },
     "Order_Blood_Tests": {
       "type": "CallSubmodule",
-      "module": "stroke_comprehensive/investigations/blood_tests",
+      "submodule": "stroke_comprehensive/investigations/blood_tests",
       "direct_transition": "Order_ECG"
     },
     "Order_ECG": {
       "type": "CallSubmodule",
-      "module": "stroke_comprehensive/investigations/ecg_module",
+      "submodule": "stroke_comprehensive/investigations/ecg_module",
       "direct_transition": "Order_NCCT"
     },
     "Order_NCCT": {
       "type": "CallSubmodule",
-      "module": "stroke_comprehensive/investigations/ncct_module",
+      "submodule": "stroke_comprehensive/investigations/ncct_module",
       "direct_transition": "Order_CTA"
     },
     "Order_CTA": {
       "type": "CallSubmodule",
-      "module": "stroke_comprehensive/investigations/cta_module",
+      "submodule": "stroke_comprehensive/investigations/cta_module",
       "direct_transition": "Check_For_TEE"
     },
     "Check_For_TEE": {
@@ -51,7 +51,7 @@
     },
     "Order_TEE": {
       "type": "CallSubmodule",
-      "module": "stroke_comprehensive/investigations/tee_module",
+      "submodule": "stroke_comprehensive/investigations/tee_module",
       "direct_transition": "Terminal"
     }
   },

@@ -1,25 +1,36 @@
 {
   "name": "mRS Score Computation",
   "remarks": [
-    "Computes Modified Rankin Scale based on NIHSS mapping",
-    "NIHSS <6 → mRS 0-1",
-    "NIHSS 6-12 → mRS 1-2",
-    "NIHSS 13-19 → mRS 2-3",
-    "NIHSS ≥20 → mRS 4-5",
-    "Uses probabilistic transitions for realistic distributions"
+    "Computes Modified Rankin Scale by calling Java regression code",
+    "Uses baseline disability, NIHSS trajectory, subtype, imaging,",
+    "vascular risk factors, and treatment response",
+    "Timepoint and target attribute are provided by the calling module",
+    "Range: 0-6"
   ],
   "states": {
     "Initial": {
       "type": "Initial",
-      "direct_transition": "Map_NIHSS_to_mRS"
+      "direct_transition": "Compute_mRS"
     },
     "Terminal": {
       "type": "Terminal"
     },
-    "Map_NIHSS_to_mRS": {
-      "type": "Simple",
+    "Compute_mRS": {
+      "type": "StrokeClinicalScore",
+      "score_type": "MRS",
+      "timepoint_attribute": "stroke_score_timepoint",
+      "assign_to_attribute_attribute": "stroke_score_target_attribute",
+      "category": "exam",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "72542-0",
+          "display": "Modified Rankin score"
+        }
+      ],
+      "unit": "score",
       "remarks": [
-        "Java implementation will compute mRS based on NIHSS attribute"
+        "Delegates score generation to StrokeScoreCalculator"
       ],
       "direct_transition": "Terminal"
     }

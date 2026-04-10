@@ -45,6 +45,7 @@ import org.mitre.synthea.helpers.TimeSeriesData;
 import org.mitre.synthea.helpers.Utilities;
 import org.mitre.synthea.helpers.physiology.IoMapper;
 import org.mitre.synthea.modules.EncounterModule;
+import org.mitre.synthea.modules.StrokeScoreCalculator;
 import org.mitre.synthea.world.agents.Person;
 import org.mitre.synthea.world.agents.Provider;
 import org.mitre.synthea.world.concepts.ClinicianSpecialty;
@@ -1768,6 +1769,7 @@ public abstract class State implements Cloneable, Serializable {
     private List<Code> codes;
     private Code valueCode;
     private String attribute;
+    private String assignToAttribute;
     private org.mitre.synthea.world.concepts.VitalSign vitalSign;
     private SampledData sampledData;
     private Attachment attachment;
@@ -1864,6 +1866,82 @@ public abstract class State implements Cloneable, Serializable {
       observation.mergeCodeList(codes);
       observation.category = category;
       observation.unit = unit;
+      if (assignToAttribute != null && assignToAttribute.length() > 0) {
+        if (value != null) {
+          person.attributes.put(assignToAttribute, value);
+        } else if (person.attributes.containsKey(assignToAttribute)) {
+          person.attributes.remove(assignToAttribute);
+        }
+      }
+
+      return true;
+    }
+  }
+
+  /**
+   * StrokeClinicalScore records a stroke-specific score computed by Java code.
+   */
+  public static class StrokeClinicalScore extends State {
+    private List<Code> codes;
+    private String category;
+    private String unit;
+    private String scoreType;
+    private String timepoint;
+    private String timepointAttribute;
+    private String assignToAttribute;
+    private String assignToAttributeAttribute;
+
+    @Override
+    protected void initialize(Module module, String name, JsonObject definition) {
+      super.initialize(module, name, definition);
+      if (codes == null || codes.isEmpty()) {
+        throw new IllegalStateException(
+            String.format("State %s must define at least one code", this.name));
+      }
+      StrokeScoreCalculator.ScoreType.fromString(scoreType);
+    }
+
+    @Override
+    public StrokeClinicalScore clone() {
+      StrokeClinicalScore clone = (StrokeClinicalScore) super.clone();
+      return clone;
+    }
+
+    @Override
+    public boolean process(Person person, long time) {
+      String resolvedTimepoint = timepoint;
+      if (timepointAttribute != null && timepointAttribute.length() > 0) {
+        Object attributeValue = person.attributes.get(timepointAttribute);
+        if (attributeValue != null) {
+          resolvedTimepoint = attributeValue.toString();
+        }
+      }
+
+      StrokeScoreCalculator.ScoreType resolvedScoreType =
+          StrokeScoreCalculator.ScoreType.fromString(scoreType);
+      StrokeScoreCalculator.Timepoint resolvedTimepointEnum =
+          StrokeScoreCalculator.Timepoint.fromString(resolvedTimepoint);
+      int scoreValue =
+          StrokeScoreCalculator.computeScore(person, time, resolvedScoreType, resolvedTimepointEnum);
+
+      String primaryCode = codes.get(0).code;
+      HealthRecord.Observation observation = person.record.observation(time, primaryCode, scoreValue);
+      entry = observation;
+      observation.name = this.name;
+      observation.mergeCodeList(codes);
+      observation.category = category;
+      observation.unit = unit;
+
+      String resolvedAssignToAttribute = assignToAttribute;
+      if (assignToAttributeAttribute != null && assignToAttributeAttribute.length() > 0) {
+        Object attributeValue = person.attributes.get(assignToAttributeAttribute);
+        if (attributeValue != null) {
+          resolvedAssignToAttribute = attributeValue.toString();
+        }
+      }
+      if (resolvedAssignToAttribute != null && resolvedAssignToAttribute.length() > 0) {
+        person.attributes.put(resolvedAssignToAttribute, scoreValue);
+      }
 
       return true;
     }
