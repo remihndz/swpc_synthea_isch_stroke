@@ -1,1 +1,146 @@
-{...}
+{
+  "name": "Stroke Subtype Classification",
+  "remarks": [
+    "Classifies stroke into TIA, ischemic (with TOAST), or hemorrhagic",
+    "Sets attributes used by interventions and score computation",
+    "TOAST classification probabilities: Large Artery 30%, Cardioembolic 35%, Small Vessel 25%, Other 10%"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Classify_Stroke_Type"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Classify_Stroke_Type": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "TIA_Pathway",
+          "distribution": 0.20
+        },
+        {
+          "transition": "Ischemic_Pathway",
+          "distribution": 0.65
+        },
+        {
+          "transition": "Hemorrhagic_Pathway",
+          "distribution": 0.15
+        }
+      ]
+    },
+    "TIA_Pathway": {
+      "type": "SetAttribute",
+      "attribute": "stroke_type",
+      "value": "TIA",
+      "direct_transition": "TIA_Condition_Onset"
+    },
+    "TIA_Condition_Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 266257000,
+          "display": "Transient ischemic attack"
+        }
+      ],
+      "assign_to_attribute": "stroke_condition",
+      "direct_transition": "TIA_Preventive_Medications"
+    },
+    "TIA_Preventive_Medications": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 309362,
+          "display": "Clopidogrel 75 MG Oral Tablet"
+        }
+      ],
+      "assign_to_attribute": "stroke_medication_antiplatelet",
+      "direct_transition": "Terminal"
+    },
+    "Ischemic_Pathway": {
+      "type": "SetAttribute",
+      "attribute": "stroke_type",
+      "value": "Ischemic",
+      "direct_transition": "Ischemic_Condition_Onset"
+    },
+    "Ischemic_Condition_Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 230690007,
+          "display": "Cerebral infarction"
+        }
+      ],
+      "assign_to_attribute": "stroke_condition",
+      "direct_transition": "TOAST_Classification"
+    },
+    "TOAST_Classification": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "TOAST_Large_Artery",
+          "distribution": 0.30
+        },
+        {
+          "transition": "TOAST_Cardioembolic",
+          "distribution": 0.35
+        },
+        {
+          "transition": "TOAST_Small_Vessel",
+          "distribution": 0.25
+        },
+        {
+          "transition": "TOAST_Other",
+          "distribution": 0.10
+        }
+      ]
+    },
+    "TOAST_Large_Artery": {
+      "type": "SetAttribute",
+      "attribute": "stroke_toast_type",
+      "value": "Large Artery Atherosclerosis",
+      "direct_transition": "Terminal"
+    },
+    "TOAST_Cardioembolic": {
+      "type": "SetAttribute",
+      "attribute": "stroke_toast_type",
+      "value": "Cardioembolic",
+      "direct_transition": "Terminal"
+    },
+    "TOAST_Small_Vessel": {
+      "type": "SetAttribute",
+      "attribute": "stroke_toast_type",
+      "value": "Small Vessel Occlusion",
+      "direct_transition": "Terminal"
+    },
+    "TOAST_Other": {
+      "type": "SetAttribute",
+      "attribute": "stroke_toast_type",
+      "value": "Other Determined Etiology",
+      "direct_transition": "Terminal"
+    },
+    "Hemorrhagic_Pathway": {
+      "type": "SetAttribute",
+      "attribute": "stroke_type",
+      "value": "Hemorrhagic",
+      "direct_transition": "Hemorrhagic_Condition_Onset"
+    },
+    "Hemorrhagic_Condition_Onset": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 230692009,
+          "display": "Intracerebral hemorrhage"
+        }
+      ],
+      "assign_to_attribute": "stroke_condition",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

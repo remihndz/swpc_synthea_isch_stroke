@@ -1,1 +1,41 @@
-{...}
+{
+  "name": "NIHSS Score Computation",
+  "remarks": [
+    "Computes NIHSS based on multivariate regression model",
+    "Factors: base score, age adjustment, hemorrhage penalty",
+    "Base: Gaussian mean=8, SD=6",
+    "Age >65: +2 points",
+    "Hemorrhagic: +3 points",
+    "Range: 0-42"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Compute_Base_NIHSS"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Compute_Base_NIHSS": {
+      "type": "Observation",
+      "category": "exam",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "9740-3",
+          "display": "NIHSS"
+        }
+      ],
+      "value": {
+        "low": 5,
+        "high": 15
+      },
+      "remarks": [
+        "Base NIHSS computation - Gaussian distribution",
+        "In Java implementation: incorporates age, hemorrhage status, imaging findings"
+      ],
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

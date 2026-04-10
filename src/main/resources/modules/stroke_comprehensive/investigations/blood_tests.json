@@ -1,1 +1,89 @@
-{...}
+{
+  "name": "Stroke-Related Blood Tests",
+  "remarks": [
+    "CBC, metabolic panel, coagulation studies, troponin",
+    "Results stored as attributes for score computation"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "CBC_Order"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "CBC_Order": {
+      "type": "Observation",
+      "category": "laboratory",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "58410-2",
+          "display": "Complete Blood Count (CBC)"
+        }
+      ],
+      "unit": "10*3/uL",
+      "value": {
+        "low": 4.5,
+        "high": 11.0
+      },
+      "assign_to_attribute": "wbc_count",
+      "direct_transition": "Glucose_Test"
+    },
+    "Glucose_Test": {
+      "type": "Observation",
+      "category": "laboratory",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2345-7",
+          "display": "Glucose"
+        }
+      ],
+      "unit": "mg/dL",
+      "value": {
+        "low": 70,
+        "high": 150
+      },
+      "assign_to_attribute": "glucose_level",
+      "direct_transition": "INR_Test"
+    },
+    "INR_Test": {
+      "type": "Observation",
+      "category": "laboratory",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "34714-6",
+          "display": "INR"
+        }
+      ],
+      "unit": "ratio",
+      "value": {
+        "low": 0.8,
+        "high": 1.1
+      },
+      "assign_to_attribute": "inr_value",
+      "direct_transition": "Troponin_Test"
+    },
+    "Troponin_Test": {
+      "type": "Observation",
+      "category": "laboratory",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "10839-9",
+          "display": "Troponin I"
+        }
+      ],
+      "unit": "ng/mL",
+      "value": {
+        "low": 0.0,
+        "high": 0.04
+      },
+      "assign_to_attribute": "troponin_level",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

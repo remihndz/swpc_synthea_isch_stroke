@@ -1,1 +1,120 @@
-{...}
+{
+  "name": "ECG Findings Simulator",
+  "remarks": [
+    "Simulates ECG findings relevant to stroke etiology",
+    "Normal (60%), Atrial Fibrillation (25%), LVH (10%), Ischemic Changes (5%)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "ECG_Procedure"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "ECG_Procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 29303009,
+          "display": "Electrocardiographic procedure"
+        }
+      ],
+      "duration": {
+        "low": 5,
+        "high": 10,
+        "unit": "minutes"
+      },
+      "direct_transition": "Simulate_ECG_Findings"
+    },
+    "Simulate_ECG_Findings": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "ECG_Normal",
+          "distribution": 0.60
+        },
+        {
+          "transition": "ECG_AFib",
+          "distribution": 0.25
+        },
+        {
+          "transition": "ECG_LVH",
+          "distribution": 0.10
+        },
+        {
+          "transition": "ECG_Ischemic",
+          "distribution": 0.05
+        }
+      ]
+    },
+    "ECG_Normal": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 164947007,
+          "display": "Normal electrocardiogram"
+        }
+      ],
+      "value_code": {
+        "text": "Normal sinus rhythm"
+      },
+      "assign_to_attribute": "ecg_finding",
+      "direct_transition": "Terminal"
+    },
+    "ECG_AFib": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 164861001,
+          "display": "Atrial fibrillation on electrocardiogram"
+        }
+      ],
+      "value_code": {
+        "text": "Atrial fibrillation"
+      },
+      "assign_to_attribute": "ecg_finding",
+      "direct_transition": "Set_Cardioembolic_Risk"
+    },
+    "Set_Cardioembolic_Risk": {
+      "type": "SetAttribute",
+      "attribute": "cardioembolic_risk",
+      "value": true,
+      "direct_transition": "Terminal"
+    },
+    "ECG_LVH": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 164873001,
+          "display": "Left ventricular hypertrophy"
+        }
+      ],
+      "value_code": {
+        "text": "LVH on ECG"
+      },
+      "assign_to_attribute": "ecg_finding",
+      "direct_transition": "Terminal"
+    },
+    "ECG_Ischemic": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 164912006,
+          "display": "Ischemic heart disease on electrocardiogram"
+        }
+      ],
+      "value_code": {
+        "text": "Ischemic changes"
+      },
+      "assign_to_attribute": "ecg_finding",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

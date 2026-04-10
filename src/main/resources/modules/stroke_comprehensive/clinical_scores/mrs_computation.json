@@ -1,1 +1,28 @@
-{...}
+{
+  "name": "mRS Score Computation",
+  "remarks": [
+    "Computes Modified Rankin Scale based on NIHSS mapping",
+    "NIHSS <6 → mRS 0-1",
+    "NIHSS 6-12 → mRS 1-2",
+    "NIHSS 13-19 → mRS 2-3",
+    "NIHSS ≥20 → mRS 4-5",
+    "Uses probabilistic transitions for realistic distributions"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Map_NIHSS_to_mRS"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Map_NIHSS_to_mRS": {
+      "type": "Simple",
+      "remarks": [
+        "Java implementation will compute mRS based on NIHSS attribute"
+      ],
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

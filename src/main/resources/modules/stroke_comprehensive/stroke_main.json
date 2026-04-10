@@ -1,1 +1,218 @@
-{...}
+{
+  "name": "Comprehensive Stroke Clinical Trial",
+  "remarks": [
+    "Main orchestrator module for comprehensive stroke care pathway",
+    "Integrates stroke subtypes, investigations, clinical scores, and interventions",
+    "Tracks mRS and NIHSS at specific timepoints for clinical trial",
+    "Supports TIA, ischemic (with TOAST classification), and hemorrhagic strokes"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Baseline_mRS_Recording"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Baseline_mRS_Recording": {
+      "type": "Observation",
+      "category": "procedure",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "72542-0",
+          "display": "Modified Rankin score"
+        }
+      ],
+      "unit": "score",
+      "value": {
+        "low": 0,
+        "high": 1
+      },
+      "remarks": [
+        "Record baseline mRS (pre-stroke) - typically 0-1 for healthy population"
+      ],
+      "assign_to_attribute": "baseline_mrs",
+      "direct_transition": "Stroke_Event_Trigger"
+    },
+    "Stroke_Event_Trigger": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 30,
+        "unit": "days"
+      },
+      "remarks": [
+        "Delay before stroke event - provides baseline period"
+      ],
+      "direct_transition": "Classify_Stroke_Subtype"
+    },
+    "Classify_Stroke_Subtype": {
+      "type": "CallSubmodule",
+      "module": "stroke_comprehensive/stroke_subtypes",
+      "direct_transition": "Emergency_Admission_Encounter"
+    },
+    "Emergency_Admission_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "emergency",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 50849002,
+          "display": "Emergency room admission (procedure)"
+        }
+      ],
+      "reason": "stroke_condition",
+      "direct_transition": "Order_Imaging_Bundle"
+    },
+    "Order_Imaging_Bundle": {
+      "type": "CallSubmodule",
+      "module": "stroke_comprehensive/investigations/imaging_bundle",
+      "direct_transition": "NIHSS_Admission"
+    },
+    "NIHSS_Admission": {
+      "type": "Observation",
+      "category": "exam",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "9740-3",
+          "display": "NIHSS score"
+        }
+      ],
+      "unit": "score",
+      "value": {
+        "low": 5,
+        "high": 15
+      },
+      "remarks": [
+        "NIHSS at admission - baseline neurological assessment",
+        "Gaussian distribution mean=10, SD=5, range 0-42"
+      ],
+      "assign_to_attribute": "nihss_admission",
+      "direct_transition": "Administer_Interventions"
+    },
+    "Administer_Interventions": {
+      "type": "CallSubmodule",
+      "module": "stroke_comprehensive/stroke_interventions",
+      "direct_transition": "End_Emergency_Encounter"
+    },
+    "End_Emergency_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Three_Month_Followup_Delay"
+    },
+    "Three_Month_Followup_Delay": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 3,
+        "unit": "months"
+      },
+      "direct_transition": "Three_Month_Followup_Encounter"
+    },
+    "Three_Month_Followup_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 390906007,
+          "display": "Follow-up encounter"
+        }
+      ],
+      "reason": "stroke_condition",
+      "direct_transition": "NIHSS_3_Month"
+    },
+    "NIHSS_3_Month": {
+      "type": "Observation",
+      "category": "exam",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "9740-3",
+          "display": "NIHSS score"
+        }
+      ],
+      "unit": "score",
+      "value": {
+        "low": 2,
+        "high": 8
+      },
+      "remarks": [
+        "NIHSS at 3 months - expected improvement from acute phase"
+      ],
+      "assign_to_attribute": "nihss_3_month",
+      "direct_transition": "mRS_3_Month"
+    },
+    "mRS_3_Month": {
+      "type": "Observation",
+      "category": "exam",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "72542-0",
+          "display": "Modified Rankin score"
+        }
+      ],
+      "unit": "score",
+      "value": {
+        "low": 1,
+        "high": 3
+      },
+      "remarks": [
+        "mRS at 3 months post-stroke"
+      ],
+      "assign_to_attribute": "mRS_3_month",
+      "direct_transition": "End_3_Month_Encounter"
+    },
+    "End_3_Month_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Six_Month_Followup_Delay"
+    },
+    "Six_Month_Followup_Delay": {
+      "type": "Delay",
+      "exact": {
+        "quantity": 3,
+        "unit": "months"
+      },
+      "direct_transition": "Six_Month_Followup_Encounter"
+    },
+    "Six_Month_Followup_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 390906007,
+          "display": "Follow-up encounter"
+        }
+      ],
+      "reason": "stroke_condition",
+      "direct_transition": "mRS_6_Month"
+    },
+    "mRS_6_Month": {
+      "type": "Observation",
+      "category": "exam",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "72542-0",
+          "display": "Modified Rankin score"
+        }
+      ],
+      "unit": "score",
+      "value": {
+        "low": 1,
+        "high": 4
+      },
+      "remarks": [
+        "mRS at 6 months post-stroke - final primary outcome"
+      ],
+      "assign_to_attribute": "mRS_6_month",
+      "direct_transition": "End_6_Month_Encounter"
+    },
+    "End_6_Month_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

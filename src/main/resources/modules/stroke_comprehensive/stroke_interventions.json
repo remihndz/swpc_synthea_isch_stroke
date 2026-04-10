@@ -1,1 +1,94 @@
-{...}
+{
+  "name": "Stroke-Specific Interventions",
+  "remarks": [
+    "Routes subtype-specific medications and procedures",
+    "Ischemic: alteplase, clopidogrel, statin",
+    "TIA: clopidogrel, statin",
+    "Hemorrhagic: BP-lowering medications (calls hypertension_medication module)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Check_Stroke_Type"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "Check_Stroke_Type": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Ischemic_Interventions",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "stroke_type",
+            "operator": "==",
+            "value": "Ischemic"
+          }
+        },
+        {
+          "transition": "Hemorrhagic_Interventions",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "stroke_type",
+            "operator": "==",
+            "value": "Hemorrhagic"
+          }
+        },
+        {
+          "transition": "Terminal"
+        }
+      ]
+    },
+    "Ischemic_Interventions": {
+      "type": "Simple",
+      "direct_transition": "Administer_Alteplase"
+    },
+    "Administer_Alteplase": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 1804799,
+          "display": "Alteplase 100 MG Injection"
+        }
+      ],
+      "assign_to_attribute": "stroke_medication_thrombolytic",
+      "remarks": [
+        "tPA (alteplase) administered for acute ischemic stroke within thrombolytic window"
+      ],
+      "direct_transition": "Administer_Clopidogrel"
+    },
+    "Administer_Clopidogrel": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": 309362,
+          "display": "Clopidogrel 75 MG Oral Tablet"
+        }
+      ],
+      "assign_to_attribute": "stroke_medication_antiplatelet",
+      "direct_transition": "Administer_Statin"
+    },
+    "Administer_Statin": {
+      "type": "CallSubmodule",
+      "module": "medications/statin",
+      "direct_transition": "Terminal"
+    },
+    "Hemorrhagic_Interventions": {
+      "type": "Simple",
+      "direct_transition": "BP_Lowering_Medication"
+    },
+    "BP_Lowering_Medication": {
+      "type": "CallSubmodule",
+      "module": "medications/hypertension_medication",
+      "remarks": [
+        "Call hypertension medication module to prescribe BP-lowering agents",
+        "For hemorrhagic stroke: goal SBP <140 mmHg"
+      ],
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

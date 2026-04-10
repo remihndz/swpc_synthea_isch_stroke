@@ -1,1 +1,115 @@
-{...}
+{
+  "name": "Transesophageal Echocardiography Module",
+  "remarks": [
+    "Cardiac evaluation for cardioembolic stroke sources",
+    "Only ordered for cardioembolic strokes",
+    "Findings: PFO (25%), LAA thrombus (20%), Vegetations (15%), Normal (40%)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "TEE_Procedure"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "TEE_Procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 40141007,
+          "display": "Transesophageal echocardiography"
+        }
+      ],
+      "duration": {
+        "low": 20,
+        "high": 30,
+        "unit": "minutes"
+      },
+      "direct_transition": "Simulate_TEE_Findings"
+    },
+    "Simulate_TEE_Findings": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "TEE_PFO",
+          "distribution": 0.25
+        },
+        {
+          "transition": "TEE_LAA_Thrombus",
+          "distribution": 0.20
+        },
+        {
+          "transition": "TEE_Vegetations",
+          "distribution": 0.15
+        },
+        {
+          "transition": "TEE_Normal",
+          "distribution": 0.40
+        }
+      ]
+    },
+    "TEE_PFO": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 204754003,
+          "display": "Patent foramen ovale"
+        }
+      ],
+      "value_code": {
+        "text": "Patent foramen ovale with right-to-left shunt"
+      },
+      "assign_to_attribute": "tee_finding",
+      "direct_transition": "Terminal"
+    },
+    "TEE_LAA_Thrombus": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 400047006,
+          "display": "Left atrial appendage thrombus"
+        }
+      ],
+      "value_code": {
+        "text": "Left atrial appendage thrombus - cardioembolic source"
+      },
+      "assign_to_attribute": "tee_finding",
+      "direct_transition": "Terminal"
+    },
+    "TEE_Vegetations": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 63740003,
+          "display": "Bacterial endocarditis"
+        }
+      ],
+      "value_code": {
+        "text": "Valvular vegetations suggestive of endocarditis"
+      },
+      "assign_to_attribute": "tee_finding",
+      "direct_transition": "Terminal"
+    },
+    "TEE_Normal": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 164947007,
+          "display": "Normal echocardiogram"
+        }
+      ],
+      "value_code": {
+        "text": "No cardioembolic source identified"
+      },
+      "assign_to_attribute": "tee_finding",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

@@ -1,1 +1,115 @@
-{...}
+{
+  "name": "CTA Angiography Module",
+  "remarks": [
+    "CT angiography to assess for large vessel occlusion",
+    "Ischemic: 30% show LVO, 70% patent vessels",
+    "Other types: mostly normal findings"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "CTA_Procedure"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "CTA_Procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 418052000,
+          "display": "CT angiography of head and neck"
+        }
+      ],
+      "duration": {
+        "low": 15,
+        "high": 20,
+        "unit": "minutes"
+      },
+      "direct_transition": "Check_Ischemic_Status"
+    },
+    "Check_Ischemic_Status": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "Ischemic_CTA",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "stroke_type",
+            "operator": "==",
+            "value": "Ischemic"
+          }
+        },
+        {
+          "transition": "CTA_Normal_Finding"
+        }
+      ]
+    },
+    "Ischemic_CTA": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "CTA_Large_Vessel_Occlusion",
+          "distribution": 0.30
+        },
+        {
+          "transition": "CTA_Patent_Vessels",
+          "distribution": 0.70
+        }
+      ]
+    },
+    "CTA_Large_Vessel_Occlusion": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 230690007,
+          "display": "Stroke"
+        }
+      ],
+      "value_code": {
+        "text": "Large vessel occlusion - middle cerebral artery or internal carotid artery"
+      },
+      "assign_to_attribute": "cta_finding",
+      "direct_transition": "Set_Thrombectomy_Candidate"
+    },
+    "Set_Thrombectomy_Candidate": {
+      "type": "SetAttribute",
+      "attribute": "thrombectomy_candidate",
+      "value": true,
+      "direct_transition": "Terminal"
+    },
+    "CTA_Patent_Vessels": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 165080006,
+          "display": "No abnormality detected"
+        }
+      ],
+      "value_code": {
+        "text": "Patent cerebral vessels - no large vessel occlusion"
+      },
+      "assign_to_attribute": "cta_finding",
+      "direct_transition": "Terminal"
+    },
+    "CTA_Normal_Finding": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 165080006,
+          "display": "No abnormality detected"
+        }
+      ],
+      "value_code": {
+        "text": "Normal cerebral vasculature"
+      },
+      "assign_to_attribute": "cta_finding",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}

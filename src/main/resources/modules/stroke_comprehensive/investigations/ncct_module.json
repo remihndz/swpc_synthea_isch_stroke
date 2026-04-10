@@ -1,1 +1,109 @@
-{...}
+{
+  "name": "NCCT Head Imaging Module",
+  "remarks": [
+    "Non-contrast CT head to differentiate stroke type",
+    "Hemorrhagic: Shows bleed with volume estimation",
+    "Ischemic: 70% no early changes, 30% early ischemic signs"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "NCCT_Procedure"
+    },
+    "Terminal": {
+      "type": "Terminal"
+    },
+    "NCCT_Procedure": {
+      "type": "Procedure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 70450006,
+          "display": "CT head without contrast"
+        }
+      ],
+      "duration": {
+        "low": 10,
+        "high": 15,
+        "unit": "minutes"
+      },
+      "direct_transition": "Check_Stroke_Type_NCCT"
+    },
+    "Check_Stroke_Type_NCCT": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "transition": "NCCT_Hemorrhagic",
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "stroke_type",
+            "operator": "==",
+            "value": "Hemorrhagic"
+          }
+        },
+        {
+          "transition": "NCCT_Ischemic"
+        }
+      ]
+    },
+    "NCCT_Hemorrhagic": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 230692009,
+          "display": "Intracerebral hemorrhage"
+        }
+      ],
+      "value_code": {
+        "text": "Hyperdense lesion with edema"
+      },
+      "assign_to_attribute": "ncct_finding",
+      "direct_transition": "Terminal"
+    },
+    "NCCT_Ischemic": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "NCCT_No_Early_Changes",
+          "distribution": 0.70
+        },
+        {
+          "transition": "NCCT_Early_Ischemic",
+          "distribution": 0.30
+        }
+      ]
+    },
+    "NCCT_No_Early_Changes": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 165080006,
+          "display": "No abnormality detected"
+        }
+      ],
+      "value_code": {
+        "text": "No acute stroke findings"
+      },
+      "assign_to_attribute": "ncct_finding",
+      "direct_transition": "Terminal"
+    },
+    "NCCT_Early_Ischemic": {
+      "type": "Observation",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": 230690007,
+          "display": "Stroke"
+        }
+      ],
+      "value_code": {
+        "text": "Early ischemic changes: loss of gray-white differentiation"
+      },
+      "assign_to_attribute": "ncct_finding",
+      "direct_transition": "Terminal"
+    }
+  },
+  "gmf_version": 2
+}
